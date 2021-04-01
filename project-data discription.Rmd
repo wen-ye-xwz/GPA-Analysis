@@ -1,0 +1,60 @@
+---
+title: "project-data discription"
+author: "Shihao Yang, Wen Ye, Xin Bu"
+date: "`r format(Sys.time(), '%d %B, %Y')`" # autogenerate date as date of last knit
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(purrr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Project Ideas & Data source
+<-We are interested in doing GPA related analysis and found some data from the [Office of Registrar](https://registrar.wisc.edu/datacenter/). We used tools like [madgrades-extractor](https://github.com/madgrades/madgrades-extractor) to convert those data from PDFs to csv file.
+
+<-Possibly, we want to see if it's a real phenomenon that UW Madison students' GPA are higher from online instructions. Or we might also look into the difference between GPAs across different colleges and majors in UW-Madison from 2019 spring to 2020 fall. Another idea we had was to see if there is necessary relationships between the rating of professors and the average GPA of their classes. Our data sources were all placed in [github repository](https://github.com/wen-ye-xwz/GPA-Analysis)
+
+## Data Glimpse
+
+```{r}
+#course_offerings.csv provide each courses name, id, and their corresponding termcode.
+course_offering <- read.csv("C:/Users/s/Desktop/STAT 340/project/course_offerings.csv")
+head(course_offering, 3)
+#courses.csv give us the number of each course offered in the past terms.
+courses <- read.csv("C:/Users/s/Desktop/STAT 340/project/courses.csv")
+head(courses, 3)
+#grade_distributions.csv measures the count of letter grades for each course sections.
+grade_distributions <- read.csv("C:/Users/s/Desktop/STAT 340/project/grade_distributions.csv")
+head(grade_distributions, 3)
+#instructors.csv give us a list of instructors name and their corresponding id number.
+instructors <- read.csv("C:/Users/s/Desktop/STAT 340/project/instructors.csv")
+head(instructors, 3)
+#rooms.csv give us each course's delivery method: whether it's online, off-campus, or on-campus. And if it's on-campus, there is a corresponding room id for that course.
+rooms <- read.csv("C:/Users/s/Desktop/STAT 340/project/rooms.csv")
+head(rooms, 3)
+#schedules.csv provides us each courses offering days in a week and its time duration.
+schedules <- read.csv("C:/Users/s/Desktop/STAT 340/project/schedules.csv")
+head(schedules, 3)
+#sections.csv collected the courses' uuid in course_offering.csv, rooms.csv, and schedules.csv together to give us a bridge to connect different datasets.
+sections <- read.csv("C:/Users/s/Desktop/STAT 340/project/sections.csv")
+head(sections, 3)
+#subject_memberships.csv provide each course's subject code with its corresponding course_offering_uuid.
+subject_memberships <- read.csv("C:/Users/s/Desktop/STAT 340/project/subject_memberships.csv")
+head(subject_memberships, 3)
+#subjects.csv collect each subject's name, abbreviation, and their subject_code.
+subjects <- read.csv("C:/Users/s/Desktop/STAT 340/project/subjects.csv")
+head(subjects, 3)
+#teachings.csv help us connect instructor_id to section_uuid
+teachings <- read.csv("C:/Users/s/Desktop/STAT 340/project/teachings.csv")
+head(teachings, 3)
+#TermCode.csv collect each academic year and its corresponding termcode for three terms in a year.
+TermCode <- read.csv("C:/Users/s/Desktop/STAT 340/project/TermCode.csv")
+head(TermCode, 3)
+```
+
+
+
