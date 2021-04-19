@@ -1,0 +1,192 @@
+---
+title: "project-Thesis Statement"
+author: "Shihao Yang, Wen Ye, Xin Bu"
+date: "`r format(Sys.time(), '%d %B, %Y')`" # autogenerate date as date of last knit
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(purrr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Thesis Statement
+
+Since Covid-19 influence our live and study profoundly, we want to explore if the online instruction has some potential influence on students grade and GPA. Our thesis statement is that even we control the same professor in the online terms and in-person terms, we find that the average GPA for online term is higher than that for the in-person section.
+
+## Project Ideas & Data source
+<-We are interested in doing GPA related analysis and found some data from the [Office of Registrar](https://registrar.wisc.edu/datacenter/). We used tools like [madgrades-extractor](https://github.com/madgrades/madgrades-extractor) to convert those data from PDFs to csv file.
+
+<-Possibly, we want to see if it's a real phenomenon that UW Madison students' GPA are higher from online instructions. Or we might also look into the difference between GPAs across different colleges and majors in UW-Madison from 2019 spring to 2020 fall. Another idea we had was to see if there is necessary relationships between the rating of professors and the average GPA of their classes. Our data sources were all placed in [github repository](https://github.com/wen-ye-xwz/GPA-Analysis)
+
+## Data Glimpse
+
+```{r}
+# read 2019 data
+
+#course_offerings.csv provide each courses name, id, and their corresponding termcode.
+course_offering_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/course_offerings.csv")
+head(course_offering_2019, 3)
+#courses.csv give us the number of each course offered in the past terms.
+courses_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/courses.csv")
+head(courses_2019, 3)
+#grade_distributions.csv measures the count of letter grades for each course sections.
+grade_distributions_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/grade_distributions.csv")
+head(grade_distributions_2019, 3)
+#instructors.csv give us a list of instructors name and their corresponding id number.
+instructors_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/instructors.csv")
+head(instructors_2019, 3)
+#rooms.csv give us each course's delivery method: whether it's online, off-campus, or on-campus. And if it's on-campus, there is a corresponding room id for that course.
+rooms_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/rooms.csv")
+head(rooms_2019, 3)
+#schedules.csv provides us each courses offering days in a week and its time duration.
+schedules_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/schedules.csv")
+head(schedules_2019, 3)
+#sections.csv collected the courses' uuid in course_offering.csv, rooms.csv, and schedules.csv together to give us a bridge to connect different datasets.
+sections_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/sections.csv")
+head(sections_2019, 3)
+#subject_memberships.csv provide each course's subject code with its corresponding course_offering_uuid.
+subject_memberships_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/subject_memberships.csv")
+head(subject_memberships_2019, 3)
+#subjects.csv collect each subject's name, abbreviation, and their subject_code.
+subjects_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/subjects.csv")
+head(subjects_2019, 3)
+#teachings.csv help us connect instructor_id to section_uuid
+teachings_2019 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/teachings.csv")
+head(teachings_2019, 3)
+#TermCode.csv collect each academic year and its corresponding termcode for three terms in a year.
+TermCode <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2019/TermCode.csv")
+head(TermCode, 3)
+
+# read 2020 data
+
+#course_offerings.csv provide each courses name, id, and their corresponding termcode.
+course_offering_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/course_offerings.csv")
+head(course_offering_2020, 3)
+#courses.csv give us the number of each course offered in the past terms.
+courses_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/courses.csv")
+head(courses_2020, 3)
+#grade_distributions.csv measures the count of letter grades for each course sections.
+grade_distributions_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/grade_distributions.csv")
+head(grade_distributions_2020, 3)
+#instructors.csv give us a list of instructors name and their corresponding id number.
+instructors_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/instructors.csv")
+head(instructors_2020, 3)
+#rooms.csv give us each course's delivery method: whether it's online, off-campus, or on-campus. And if it's on-campus, there is a corresponding room id for that course.
+rooms_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/rooms.csv")
+head(rooms_2020, 3)
+#schedules.csv provides us each courses offering days in a week and its time duration.
+schedules_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/schedules.csv")
+head(schedules_2020, 3)
+#sections.csv collected the courses' uuid in course_offering.csv, rooms.csv, and schedules.csv together to give us a bridge to connect different datasets.
+sections_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/sections.csv")
+head(sections_2020, 3)
+#subject_memberships.csv provide each course's subject code with its corresponding course_offering_uuid.
+subject_memberships_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/subject_memberships.csv")
+head(subject_memberships_2020, 3)
+#subjects.csv collect each subject's name, abbreviation, and their subject_code.
+subjects_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/subjects.csv")
+head(subjects_2020, 3)
+#teachings.csv help us connect instructor_id to section_uuid
+teachings_2020 <- read.csv("C:/Users/91688/Documents/STAT340/project/madgrades-extractor-master/data/2020/teachings.csv")
+head(teachings_2020, 3)
+```
+
+
+```{r}
+# We have several dataset: course_offerings, courses.csv, grade_distributions, sections, teachings, instructors, rooms, subject_memberships, subjects, schedules, TermCode
+
+# we cunreently do not need the subjects, one course meet many subjects
+
+
+# for 2019 data
+# name each uuic to make it clear 
+names(courses_2019)[1] = "course_uuid"
+names(courses_2019)[2] = "course_name"
+names(course_offering_2019)[1] = "course_offering_uuid"
+names(sections_2019)[1] = "section_uuid"
+names(sections_2019)[4] = "section_number"
+names(instructors_2019)[1] = 'instructor_id'
+names(instructors_2019)[2] = "instructor_name"
+names(courses_2019)[3] = "course_number"
+course_offering_2019 <- course_offering_2019 %>% 
+  select(-name)
+names(subjects_2019)[1] = 'subject_code'
+names(subjects_2019)[2] = 'subject_name'
+subjects_2019$subject_code = as.numeric(subjects_2019$subject_code)
+
+room_facilitycode_online = "86d1debf-3f3a-39b7-bc0d-976a4fa33862"
+
+# combine those data together
+data_2019 = course_offering_2019 %>% 
+  left_join(courses_2019, by = "course_uuid") %>% 
+  left_join(grade_distributions_2019, by = "course_offering_uuid") %>% 
+  left_join(sections_2019, by = c("course_offering_uuid", "section_number")) %>% 
+  left_join(teachings_2019, by = "section_uuid") %>% 
+  left_join(instructors_2019, by = "instructor_id") %>% 
+  mutate(isonline = case_when(room_uuid == room_facilitycode_online ~ TRUE,
+                            TRUE ~ FALSE)) %>% 
+  filter(gpa != "null") %>% 
+  distinct(course_name, section_number, instructor_name, .keep_all = TRUE) %>% 
+  # select(-course_offering_uuid, -room_uuid, -schedule_uuid, -instructor_id, -course_uuid, -term_code, -section_uuid) %>% 
+  left_join(subject_memberships_2019, by = "course_offering_uuid") %>%
+  left_join(subjects_2019, by = "subject_code") 
+  # select(course_name, section_number, section_type, course_number, instructor_name, gpa, isonline, a_count:other_count)
+
+# 2020 data
+# name each uuic to make it clear 
+names(courses_2020)[1] = "course_uuid"
+names(courses_2020)[2] = "course_name"
+names(course_offering_2020)[1] = "course_offering_uuid"
+names(sections_2020)[1] = "section_uuid"
+names(sections_2020)[4] = "section_number"
+names(instructors_2020)[1] = 'instructor_id'
+names(instructors_2020)[2] = "instructor_name"
+names(courses_2020)[3] = "course_number"
+course_offering_2020 <- course_offering_2020 %>% 
+  select(-name)
+# names(subjects_2020)[1] = 'subject_code'
+# names(subjects_2020)[2] = 'subject_name'
+# subjects_2020$subject_code = as.numeric(subjects_2020$subject_code)
+
+room_facilitycode_online = "86d1debf-3f3a-39b7-bc0d-976a4fa33862"
+
+# combine those data together
+data_2020 = course_offering_2020 %>% 
+  left_join(courses_2020, by = "course_uuid") %>% 
+  left_join(grade_distributions_2020, by = "course_offering_uuid") %>% 
+  left_join(sections_2020, by = c("course_offering_uuid", "section_number")) %>% 
+  left_join(teachings_2020, by = "section_uuid") %>% 
+  left_join(instructors_2020, by = "instructor_id") %>% 
+  mutate(isonline = case_when(room_uuid == room_facilitycode_online ~ TRUE,
+                            TRUE ~ FALSE)) %>% 
+  filter(gpa != "null") %>% 
+  select(course_name, section_number, section_type, course_number, instructor_name, gpa, isonline, a_count:other_count) %>% 
+  distinct(course_name, section_number, instructor_name, .keep_all = TRUE)
+  # select(-course_offering_uuid, -room_uuid, -schedule_uuid, -instructor_id, -course_uuid, -term_code, -section_uuid) %>% 
+  # left_join(subject_memberships_2020, by = "course_offering_uuid") %>% 
+  # left_join(subjects_2020, by = "subject_code")
+
+```
+
+
+```{r}
+data_2019
+```
+
+
+1. Enroll number(count_sum) in total 2019 1000, 2020 2000, graph
+
+2. math, cs, stat: 3 subject -> math, class number, enroll number, gpa
+
+3. GPA change(hypothesis testing) research question, box 
+
+draft -> improve
+
+
+## WHy is this data interesting?
+<- We found this data interesting because it is a comprehensive dataset from the Office of Registrar of our own university. We can determine the specific letter grade count for any class taught in the semesters we are examining and the average GPA for each course as well as the average GPA for all courses of a specific subject.With information about the room, we have facility code corresponding to online and in-person instructions which allows us to examine the difference between the same class taught in online environment and in-preson instructions. The question we asked closely relates to our friends and ourselves as well, especially the University just updated the grading policy of pass/fail.
+
