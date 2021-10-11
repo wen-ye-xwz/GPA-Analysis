@@ -1,8 +1,8 @@
 ---
 title: "STAT340 Final Project"
-author: "Shihao Yang, Wen Ye, Xin Bu"
-date: "`r format(Sys.time(), '%d %B, %Y')`" # autogenerate date as date of last knit
-output: html_document
+author: " Wen Ye, Shihao Yang, Xin Bu"
+date: "05/04/2021"
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
